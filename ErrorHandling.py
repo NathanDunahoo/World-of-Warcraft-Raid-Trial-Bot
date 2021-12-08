@@ -1,3 +1,5 @@
+from discord.ext import commands
+
 valid_classes = ["Paladin", "Monk", "Druid", "Priest", 'Deathknight', 'Demonhunter', 'Rogue', 'Mage', 'Warlock', 'Warrior', 'Shaman', 'Hunter']
 valid_specs = {
     'Paladin': ['prot', 'ret', 'holy'],
@@ -37,6 +39,17 @@ class SpecError(Exception):
 
 class TrialError(Exception):
     pass
+
+class ErrorHandler(commands.Cog):
+    """A cog for global error handling."""
+
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+        if isinstance(error, commands.BadArgument):
+            await ctx.send('I could not find that trial...')
 
 def check_valid_class_spec(_class: str, spec: str):
     if _class not in valid_classes:

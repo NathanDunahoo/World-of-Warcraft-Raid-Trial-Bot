@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import date
-from ClassSpecVerifier import TrialError
+from ErrorHandling import TrialError
 from TrialModel import Trial, create_trial_from_tuple
 from os import getenv
 
