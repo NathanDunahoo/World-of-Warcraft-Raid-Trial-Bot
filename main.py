@@ -134,8 +134,22 @@ async def make_inactive(ctx, trial: tm.get_Trial_by_name):
     :return: None
     """
 
-    tm.make_inactive(trial, "0")
+    tm.change_status(trial, 0)
     await ctx.send(f"{trial.name} has been made inactive")
+
+@client.command()
+async def make_active(ctx, trial: tm.get_Trial_by_name):
+    """
+    Discord command for moving trial's status to 'active' or 1
+
+    :param ctx: commands.Context
+    :param trial: Trial from get_Trial_by_name
+    :return: None
+    """
+
+    tm.change_status(trial, 1)
+    tm.change_start_date(trial)
+    await ctx.send(f"{trial.name} has been made active")
 
 @client.command()
 async def add_logs(ctx, trial: tm.get_Trial_by_name, logs: str):

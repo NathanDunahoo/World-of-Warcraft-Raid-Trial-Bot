@@ -113,7 +113,7 @@ class TrialManager:
         """, {'name': trial.name})
         self.update_db_and_list()
 
-    def change_start_date(self, trial: Trial, new_date: str):
+    def change_start_date(self, trial: Trial, new_date=date.today()):
         """
         DB action for changing the start_date or 'date_joined' for a trial
 
@@ -124,7 +124,7 @@ class TrialManager:
         self.cur.execute(f"""UPDATE {TRIAL_TABLE}
                 SET date=:date
                 WHERE name=:name
-        """, {'date': new_date, 'name': trial.name})
+        """, {'date': str(new_date), 'name': trial.name})
         self.update_db_and_list()
 
     def add_logs(self, trial: Trial, logs: str):
@@ -142,17 +142,17 @@ class TrialManager:
             """, {'logs': logs, 'name': trial.name})
         self.update_db_and_list()
 
-    def make_inactive(self, trial: Trial, status: str):
+    def change_status(self, trial: Trial, status: int):
         """
-        DB action for making a trial 'inactive"
+        DB action for changing a trial's status"
         For Discord command !make_inactive
 
         :param trial: TrialModel
-        :param status: '0' for inactive
+        :param status: '0' for inactive - '1' for active
         :return: None
         """
         self.cur.execute(f"""UPDATE {TRIAL_TABLE}
-                        SET date=:status
+                        SET active=:status
                         WHERE name=:name
                 """, {'status': status, 'name': trial.name})
         self.update_db_and_list()
