@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import date
-from ErrorHandling import TrialError
-from TrialModel import Trial, create_trial_from_tuple
+from core.ErrorHandling import TrialError
+from core.TrialModel import Trial, create_trial_from_tuple
 
 DB_NAME = 'inferno.db'
 TRIAL_TABLE = 'trials'

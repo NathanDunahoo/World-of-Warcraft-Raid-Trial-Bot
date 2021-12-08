@@ -1,5 +1,5 @@
 from datetime import date
-from ErrorHandling import class_icons
+from core.ErrorHandling import class_icons
 from discord import Embed
 
 class Trial:
