@@ -182,7 +182,10 @@ class TrialManager:
 if __name__ == "__main__":
     # For testing
     tm = TrialManager()
-    tm.check_for_promotions()
+    for t in tm.trial_list:
+        print(str(t))
+        print(repr(t))
+    #tm.check_for_promotions()
     pass
 
 

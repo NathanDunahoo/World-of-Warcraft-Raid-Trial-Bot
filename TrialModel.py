@@ -3,7 +3,7 @@ from ErrorHandling import class_icons
 from discord import Embed
 
 class Trial:
-    def __init__(self, name, wow_class, spec, active,  date_joined, logs=''):
+    def __init__(self, name, wow_class, spec, active,  date_joined, logs=None):
         self.name: str = name
         self._class: str = wow_class
         self.spec: str = spec
@@ -18,10 +18,10 @@ class Trial:
         self.class_icon = class_icons[self.get_class()]
 
     def __repr__(self):
-        return f"{self.name} ({self.spec}-{self._class})"
+        return f"{self.name}, {self._class}, {self.spec}, {self.active}, {self.date_joined}, {self.logs}"
 
     def __str__(self):
-        return f"{self.name} ({self.spec}-{self._class}) - {self.logs}"
+        return f"Trial({self.name}, {self._class}, {self.spec}, {self.active}, {self.date_joined}, {self.logs})"
 
     def get_trial(self) -> tuple:
         """
@@ -76,7 +76,7 @@ def create_trial_from_tuple(trial_info: tuple) -> Trial:
     :return: Trial
     """
     name, _class, spec, date_joined, logs, active = trial_info
-    return Trial(name, _class, spec, active, date_joined, logs)
+    return Trial(name=name, wow_class=_class, spec=spec, active=active, date_joined=date_joined, logs=logs)
 
 
 

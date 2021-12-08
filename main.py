@@ -20,7 +20,7 @@ async def exit(ctx):
     await ctx.bot.logout()
 
 @client.command()
-async def add_trial(ctx, name, _class, spec, logs=''):
+async def add_trial(ctx, name, _class, spec, logs=None):
     """
     Discord command for adding a new trial
     Checks if class and spec are valid
@@ -174,8 +174,6 @@ async def check_for_promotions(ctx):
     print("Starting checks for promotions")
     trials_for_promotion = [trial.name for trial in tm.trial_list if trial.check_for_promotion()]
     await ctx.send(f"<@&{os.getenv('ROLE_ID')}> Trials ready for promotion: {', '.join(trials_for_promotion)}")
-
-
 
 # _________________________________________Other Commands_____________________________________________________________ #
 
