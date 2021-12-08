@@ -31,8 +31,8 @@ class TrialManager:
         Creates a Trial() and adds it to the trial_list
 
         :param name: str trial's name ('Notey')
-        :param _class: str trial's WoW class (paladin, warlock, mage)
-        :param spec:  str trial's WoW class specification (prot, afflication, frost)
+        :param _class: str trial's WoW class (Paladin, Warlock, Mage)
+        :param spec:  str trial's WoW class specification (Prot, Afflication, Frost)
         :param logs: str url to trial's Warcraft logs (optional can be added later)
         :param date_joined: date object - default date.today()
         :param active: 0 or 1
@@ -102,12 +102,8 @@ class TrialManager:
         """
         return trial in self.get_name_of_all_trials()
 
-    def check_for_promotions(self):
-        for trial in self.trial_list:
-            if trial.check_for_promotion():
-                print(trial.name, True)
-            else:
-                print(trial.name, False)
+    def get_trials_ready_for_promotion(self) -> list[str]:
+        return [trial.name for trial in self.trial_list if trial.check_for_promotion()]
 
     def promote_trial(self, trial: Trial):
         """

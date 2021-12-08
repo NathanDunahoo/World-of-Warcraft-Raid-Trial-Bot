@@ -165,15 +165,14 @@ async def add_logs(ctx, trial: tm.get_Trial_by_name, logs: str):
     await ctx.send(f"{trial.name}'s logs have been updated to {logs}")
 
 @client.command()
-async def start_promotion_checks(ctx):
-    await check_for_promotions.start(ctx)
+async def promotion_task(ctx):
+    await check_for_trial_promotions.start(ctx)
 
 # TODO fix this
 @tasks.loop(hours=24)
-async def check_for_promotions(ctx):
+async def check_for_trial_promotions(ctx):
     print("Starting checks for promotions")
-    trials_for_promotion = [trial.name for trial in tm.trial_list if trial.check_for_promotion()]
-    await ctx.send(f"<@&{os.getenv('ROLE_ID')}> Trials ready for promotion: {', '.join(trials_for_promotion)}")
+    await ctx.send(f"<@&{os.getenv('ROLE_ID')}> Trials ready for promotion: {', '.join(tm.get_trials_ready_for_promotion())}")
 
 # _________________________________________Other Commands_____________________________________________________________ #
 
