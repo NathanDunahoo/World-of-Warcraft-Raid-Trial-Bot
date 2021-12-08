@@ -1,9 +1,9 @@
 from datetime import date
-from class_verifier import class_icons
+from ClassSpecVerifier import class_icons
 from discord import Embed
 
 class Trial:
-    def __init__(self, name, wow_class, spec, date_joined, logs=''):
+    def __init__(self, name, wow_class, spec, date_joined=date.today(), logs=''):
         self.name: str = name
         self._class: str = wow_class
         self.spec: str = spec
@@ -22,7 +22,7 @@ class Trial:
 
     def get_days_as_a_trial(self):
         if self.date_joined != '0':
-            year, month, day = self.date_joined.split('-')
+            year, month, day = str(self.date_joined).split('-')
             date_joined = date(int(year), int(month), int(day))
             return (date.today()-date_joined).days
         else:
