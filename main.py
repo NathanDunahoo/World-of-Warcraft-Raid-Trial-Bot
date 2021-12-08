@@ -69,87 +69,115 @@ async def list_trials(ctx):
     await ctx.send(embed=embed)
 
 @client.command()
-async def get_status(ctx, trial: str):
+async def get_status(ctx, trials_name: str):
     """
     Discord Command for sending the status of the trial (Name, Class, Spec, Logs, Days as trial) all in an Embed
 
     :param ctx: Discord Bot
-    :param trial: str trial's name ('Notey')
+    :param trials_name: str trial's name ('Notey')
     :return: None
     """
-    trial: Trial = trial_manager.get_Trial_by_name(trial)
-    await ctx.send(embed=trial.get_embed())
+    try:
+        trial: Trial = trial_manager.get_Trial_by_name(trials_name)
+        await ctx.send(embed=trial.get_embed())
+    except ClassSpecVerifier.TrialError:
+        await ctx.send(f"{trials_name} is not a valid trial...!list_trials")
 
 @client.command()
-async def promote_trial(ctx, trial: str):
+async def promote_trial(ctx, trials_name: str):
     """
     Discord command for promoting a trial
 
     :param ctx: Discord Bot
-    :param trial: str trial's name ('Notey')
+    :param trials_name: str trial's name ('Notey')
     :return: None
     """
     try:
-        trial_manager.promote_trial(trial)
-        await ctx.send(f"{trial} has been promoted")
-    except KeyError:
-        await ctx.send(f"{trial} is not valid...!list_trials for all valid trials")
+        trial: Trial = trial_manager.get_Trial_by_name(trials_name)
+    except ClassSpecVerifier.TrialError:
+        await ctx.send(f"{trials_name} is not valid...!list_trials for all valid trials")
+        return
+
+    trial_manager.promote_trial(trial)
+    await ctx.send(f"{trial} has been promoted")
+
 
 @client.command()
-async def remove_trial(ctx, trial: str):
+async def remove_trial(ctx, trials_name: str):
     """
     Discorc command for removing a trial
 
     *Same as promote_trial()
 
     :param ctx: Discord Bot
-    :param trial: str trial's name ('Notey')
+    :param trials_name: str trial's name ('Notey')
     :return: None
     """
     try:
-        trial_manager.promote_trial(trial)
-        await ctx.send(f"{trial} has been removed")
-    except KeyError:
-        await ctx.send(f"{trial} is not valid...!list_trials for all valid trials")
+        trial: Trial = trial_manager.get_Trial_by_name(trials_name)
+    except ClassSpecVerifier.TrialError:
+        await ctx.send(f"{trials_name} is not valid...!list_trials for all valid trials")
+        return
+
+    trial_manager.promote_trial(trial)
+    await ctx.send(f"{trial.name} has been removed")
 
 @client.command()
-async def change_start_date(ctx, trial: str, new_date: str):
+async def change_start_date(ctx, trials_name: str, new_date: str):
     # TODO add date verification/error handling
     """
     Updates a trial's join date
 
     :param ctx: Discord Bot
-    :param trial: str trial's name ('Notey')
+    :param trials_name: str trial's name ('Notey')
     :param new_date: str '2021-11-30'
     :return: None
     """
+    try:
+        trial: Trial = trial_manager.get_Trial_by_name(trials_name)
+    except ClassSpecVerifier.TrialError:
+        await ctx.send(f"{trials_name} is not valid...!list_trials for all valid trials")
+        return
+
     trial_manager.change_start_date(trial, new_date)
-    await ctx.send(f"{trial}s start date has been updated to {new_date}")
+    await ctx.send(f"{trial.name}'s start date has been updated to {new_date}")
 
 
 @client.command()
-async def make_inactive(ctx, trial: str):
+async def make_inactive(ctx, trials_name: str):
     """
     Discord command for moving trial's status to 'inactive' or '0'
 
     :param ctx: Discord Bot
-    :param trial: str trial's name ('Notey')
+    :param trials_name: str trial's name ('Notey')
     :return: None
     """
+    try:
+        trial: Trial = trial_manager.get_Trial_by_name(trials_name)
+    except ClassSpecVerifier.TrialError:
+        await ctx.send(f"{trials_name} is not valid...!list_trials for all valid trials")
+        return
+
     trial_manager.make_inactive(trial, "0")
-    await ctx.send(f"{trial} has been made inactive")
+    await ctx.send(f"{trial.name} has been made inactive")
 
 @client.command()
-async def add_logs(ctx, trial: str, logs: str):
+async def add_logs(ctx, trials_name: str, logs: str):
     """
     Discord command for adding/updating logs to a trial
     :param ctx: Discord Bot
-    :param trial: str trial's name ('Notey')
+    :param trials_name: str trial's name ('Notey')
     :param logs: str url for trial's Warcraft logs ('https://www.warcraftlogs.com/character/id/55296682')
     :return: None
     """
+    try:
+        trial: Trial = trial_manager.get_Trial_by_name(trials_name)
+    except ClassSpecVerifier.TrialError:
+        await ctx.send(f"{trials_name} is not valid...!list_trials for all valid trials")
+        return
+
     trial_manager.add_logs(trial, logs)
-    await ctx.send(f"{trial}s logs have been updated to {logs}")
+    await ctx.send(f"{trial.name}'s logs have been updated to {logs}")
 
 # TODO fix this
 @tasks.loop(hours=24)

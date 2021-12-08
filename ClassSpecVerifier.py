@@ -35,6 +35,9 @@ class ClassError(Exception):
 class SpecError(Exception):
     pass
 
+class TrialError(Exception):
+    pass
+
 def check_valid_class_spec(_class: str, spec: str):
     if _class not in valid_classes:
         raise ClassError

@@ -1,10 +1,11 @@
 import sqlite3
 from datetime import date
+from ClassSpecVerifier import TrialError
 from TrialModel import Trial, create_trial_from_tuple
 from os import getenv
 
-DB_NAME: str = getenv("DB_NAME")
-TRIAL_TABLE: str = getenv("DB_TRIAL_TABLE")
+DB_NAME: str = 'inferno.db'
+TRIAL_TABLE: str = 'trials'
 
 class TrialManager:
     con = sqlite3.connect(DB_NAME)
@@ -84,6 +85,8 @@ class TrialManager:
         :param name: str trial's name ('Notey')
         :return: Trial from trial's name
         """
+        if name not in self.get_name_of_all_trials():
+            raise TrialError
         for trial in self.trial_list:
             if trial.name == name:
                 return trial
@@ -98,61 +101,61 @@ class TrialManager:
         """
         return trial in self.get_name_of_all_trials()
 
-    def promote_trial(self, trial: str):
+    def promote_trial(self, trial: Trial):
         """
         DB action for 'promoting' a trial or simply deleting their entry from the db
 
-        :param trial: str trial's name ('Notey')
+        :param trial: TrialModel
         :return: None
         """
-        print(f"{trial} has been deleted from table")
+        print(f"{trial.name} has been deleted from table")
         self.cur.execute(f"""DELETE FROM {TRIAL_TABLE}
                 WHERE name=:name
-        """, {'name': trial})
+        """, {'name': trial.name})
         self.update_db_and_list()
 
-    def change_start_date(self, trial: str, new_date: str):
+    def change_start_date(self, trial: Trial, new_date: str):
         """
         DB action for changing the start_date or 'date_joined' for a trial
 
-        :param trial: str trial's name ('Notey')
+        :param trial: TrialModel
         :param new_date: str date format: '2021-11-30'
         :return: None
         """
         self.cur.execute(f"""UPDATE {TRIAL_TABLE}
                 SET date=:date
                 WHERE name=:name
-        """, {'date': new_date, 'name': trial})
+        """, {'date': new_date, 'name': trial.name})
         self.update_db_and_list()
 
-    def add_logs(self, trial: str, logs: str):
+    def add_logs(self, trial: Trial, logs: str):
         """
         DB action for adding/updating logs for a trial
         For Discord command !add_logs
 
-        :param trial: str trial's name ('Notey')
+        :param trial: TrialModel
         :param logs: str url to trial's Warcraft logs ('https://www.warcraftlogs.com/character/id/55296682')
         :return: None
         """
         self.cur.execute(f"""UPDATE {TRIAL_TABLE}
                     SET logs=:logs
                     WHERE name=:name
-            """, {'logs': logs, 'name': trial})
+            """, {'logs': logs, 'name': trial.name})
         self.update_db_and_list()
 
-    def make_inactive(self, trial: str, status: str):
+    def make_inactive(self, trial: Trial, status: str):
         """
         DB action for making a trial 'inactive"
         For Discord command !make_inactive
 
-        :param trial: str trial's name ('Notey')
+        :param trial: TrialModel
         :param status: '0' for inactive
         :return: None
         """
         self.cur.execute(f"""UPDATE {TRIAL_TABLE}
                         SET date=:status
                         WHERE name=:name
-                """, {'status': status, 'name': trial})
+                """, {'status': status, 'name': trial.name})
         self.update_db_and_list()
 
     def update_db_and_list(self):
@@ -169,10 +172,12 @@ class TrialManager:
 
 
 if __name__ == "__main__":
+    tm = TrialManager()
     # create_table()
     # rint(get_all_trials())
     # print(get_all_trials_as_str())
     # get_days_as_a_trial('Notey')
+    print(tm.get_Trial_by_name('xxx'))
     pass
 
 
