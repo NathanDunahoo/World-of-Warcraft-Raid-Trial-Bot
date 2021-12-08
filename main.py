@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from discord import Embed, File
-from os import getenv
+import os
 from discord.ext import commands, tasks
 from sqlite3 import IntegrityError
 import ErrorHandling
@@ -161,9 +161,11 @@ async def check_for_promotions():
 
 @client.command()
 async def pimmy(ctx):
-    await ctx.send(file=File(r'./media/FENNECFRIDAY.mp4'))
+    file = r'./media/FENNECFRIDAY.mp4'
+    if os.path.exists(file):
+        await ctx.send(file=File(file))
 
 
 if __name__ == '__main__':
-    client.run(getenv('TOKEN'))
+    client.run(os.getenv('TOKEN'))
 

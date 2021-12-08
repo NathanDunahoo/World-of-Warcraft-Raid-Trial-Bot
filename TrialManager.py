@@ -2,10 +2,9 @@ import sqlite3
 from datetime import date
 from ErrorHandling import TrialError
 from TrialModel import Trial, create_trial_from_tuple
-from os import getenv
 
-DB_NAME: str = 'inferno.db'
-TRIAL_TABLE: str = 'trials'
+DB_NAME = 'inferno.db'
+TRIAL_TABLE = 'trials'
 
 class TrialManager:
     con = sqlite3.connect(DB_NAME)
