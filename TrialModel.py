@@ -3,13 +3,14 @@ from ErrorHandling import class_icons
 from discord import Embed
 
 class Trial:
-    def __init__(self, name, wow_class, spec, date_joined=date.today(), logs=''):
+    def __init__(self, name, wow_class, spec, active,  date_joined=date.today(), logs=''):
         self.name: str = name
         self._class: str = wow_class
         self.spec: str = spec
         self.date_joined: date = date_joined
         self.logs = logs
         self.class_icon = class_icons[self.get_class()]
+        self.active = active
 
     def __repr__(self):
         return f"{self.name} ({self.spec}-{self._class})"
@@ -17,7 +18,7 @@ class Trial:
     def __str__(self):
         return f"{self.name} ({self.spec}-{self._class}) - {self.logs}"
 
-    def get_trial(self):
+    def get_trial(self) -> tuple:
         """
         Gets the Trial in tuple format
 
@@ -25,13 +26,16 @@ class Trial:
         """
         return tuple([self.name, self.spec, self._class, self.get_days_as_a_trial()])
 
+    def is_active(self) -> bool:
+        return self.active not in [0, 'inactive']
+
     def get_days_as_a_trial(self):
-        if self.date_joined != '0':
+        if self.is_active():
             year, month, day = str(self.date_joined).split('-')
             date_joined = date(int(year), int(month), int(day))
             return (date.today()-date_joined).days
         else:
-            return 0
+            return -1
 
     def check_for_promotion(self) -> bool:
         """
@@ -66,8 +70,8 @@ def create_trial_from_tuple(trial_info: tuple) -> Trial:
     :param trial_info: (name, _class, spec, date_joined, logs)
     :return: Trial
     """
-    name, _class, spec, date_joined, logs, = trial_info
-    return Trial(name, _class, spec, date_joined, logs)
+    name, _class, spec, date_joined, logs, active = trial_info
+    return Trial(name, _class, spec, active, date_joined, logs)
 
 
 

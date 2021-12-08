@@ -63,7 +63,8 @@ async def list_trials(ctx):
     embed = Embed(title="Current Trials", color=0x33B5FF)
     for trial in list_of_sorted_trials:
         trial = tm.get_Trial_by_name(trial[0])
-        value_desc = f"Class: {trial.get_class()}\nSpec: {trial.spec}\n Days as Trial: {trial.get_days_as_a_trial()}\n [Logs]({trial.logs})"
+        days_as_trial = 'Inactive' if trial.get_days_as_a_trial() < 0 else trial.get_days_as_a_trial()
+        value_desc = f"Class: {trial.get_class()}\nSpec: {trial.spec}\n Days as Trial: {days_as_trial}\n [Logs]({trial.logs})"
         embed.add_field(name=trial.name, value=value_desc)
     await ctx.send(embed=embed)
 
