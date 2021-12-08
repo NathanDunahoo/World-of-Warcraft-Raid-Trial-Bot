@@ -5,6 +5,11 @@ from sqlite3 import IntegrityError
 from core import ErrorHandling
 from core.TrialManager import TrialManager
 
+"""
+TrialCommands contains all commands used to manage World of Warcraft raid trials
+
+"""
+
 tm = TrialManager()
 class TrialCommands(commands.Cog):
 
