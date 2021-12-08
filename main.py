@@ -9,6 +9,10 @@ from TrialManager import TrialManager
 client = commands.Bot(command_prefix='!')
 tm = TrialManager()
 
+cog_files = ['CustomUserCommands']
+for cog_file in cog_files:
+    client.load_extension(cog_file)
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
