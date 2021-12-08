@@ -29,7 +29,7 @@ class Trial:
 
         :return: tuple(str)
         """
-        return tuple([self.name, self.spec, self._class, self.get_days_as_a_trial()])
+        return tuple([self.name, self.spec, self._class, self.days_as_trial])
 
     def is_active(self) -> bool:
         return self.active not in [0, 'inactive']
