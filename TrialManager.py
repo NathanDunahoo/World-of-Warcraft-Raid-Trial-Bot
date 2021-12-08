@@ -102,6 +102,13 @@ class TrialManager:
         """
         return trial in self.get_name_of_all_trials()
 
+    def check_for_promotions(self):
+        for trial in self.trial_list:
+            if trial.check_for_promotion():
+                print(trial.name, True)
+            else:
+                print(trial.name, False)
+
     def promote_trial(self, trial: Trial):
         """
         DB action for 'promoting' a trial or simply deleting their entry from the db
@@ -174,6 +181,8 @@ class TrialManager:
 
 if __name__ == "__main__":
     # For testing
+    tm = TrialManager()
+    tm.check_for_promotions()
     pass
 
 

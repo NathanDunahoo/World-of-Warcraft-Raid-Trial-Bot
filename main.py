@@ -11,7 +11,7 @@ tm = TrialManager()
 
 @client.event
 async def on_ready():
-    print(f'We have logged in as {client}')
+    print('We have logged in as {0.user}'.format(client))
     client.add_cog(ErrorHandling.ErrorHandler(client))
 
 @client.command()
@@ -63,7 +63,7 @@ async def list_trials(ctx):
     embed = Embed(title="Current Trials", color=0x33B5FF)
     for trial in list_of_sorted_trials:
         trial = tm.get_Trial_by_name(trial[0])
-        days_as_trial = 'Inactive' if trial.get_days_as_a_trial() < 0 else trial.get_days_as_a_trial()
+        days_as_trial = 'Inactive' if trial.days_as_trial < 0 else trial.days_as_trial
         value_desc = f"Class: {trial.get_class()}\nSpec: {trial.spec}\n Days as Trial: {days_as_trial}\n [Logs]({trial.logs})"
         embed.add_field(name=trial.name, value=value_desc)
     await ctx.send(embed=embed)
@@ -110,7 +110,6 @@ async def remove_trial(ctx, trial: tm.get_Trial_by_name):
 
 @client.command()
 async def change_start_date(ctx, trial: tm.get_Trial_by_name, date: ErrorHandling.check_valid_date):
-    # TODO add date verification/error handling
     """
     Updates a trial's join date
 
@@ -165,13 +164,19 @@ async def add_logs(ctx, trial: tm.get_Trial_by_name, logs: str):
     tm.add_logs(trial, logs)
     await ctx.send(f"{trial.name}'s logs have been updated to {logs}")
 
+@client.command()
+async def start_promotion_checks(ctx):
+    await check_for_promotions.start(ctx)
+
 # TODO fix this
 @tasks.loop(hours=24)
-async def check_for_promotions():
-    print("starting checks")
-    for trial in tm.trial_list:
-        if trial.check_for_promotion():
-            pass
+async def check_for_promotions(ctx):
+    print("Starting checks for promotions")
+    trials_for_promotion = [trial.name for trial in tm.trial_list if trial.check_for_promotion()]
+    await ctx.send(f"<@&{os.getenv('ROLE_ID')}> Trials ready for promotion: {', '.join(trials_for_promotion)}")
+
+
+
 # _________________________________________Other Commands_____________________________________________________________ #
 
 @client.command()

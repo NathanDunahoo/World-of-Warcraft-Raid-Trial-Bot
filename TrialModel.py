@@ -7,10 +7,15 @@ class Trial:
         self.name: str = name
         self._class: str = wow_class
         self.spec: str = spec
+        self.logs: str = logs
+
+        self.active: int = active
+
         self.date_joined: date = date_joined
-        self.logs = logs
+        self.days_as_trial: int = 0
+        self.get_days_as_a_trial()
+
         self.class_icon = class_icons[self.get_class()]
-        self.active = active
 
     def __repr__(self):
         return f"{self.name} ({self.spec}-{self._class})"
@@ -33,9 +38,9 @@ class Trial:
         if self.is_active():
             year, month, day = str(self.date_joined).split('-')
             date_joined = date(int(year), int(month), int(day))
-            return (date.today()-date_joined).days
+            self.days_as_trial = int((date.today()-date_joined).days)
         else:
-            return -1
+            self.days_as_trial = -1
 
     def check_for_promotion(self) -> bool:
         """
@@ -43,7 +48,7 @@ class Trial:
 
         :return: None
         """
-        return self.get_days_as_a_trial == 30
+        return self.days_as_trial > 30
 
     def get_class(self) -> str:
         """
@@ -58,7 +63,7 @@ class Trial:
 
         :return: Embed
         """
-        embed_description = f"Class: {self.get_class()}\n Spec: {self.spec}\n Days as Trial: {self.get_days_as_a_trial()}\n"
+        embed_description = f"Class: {self.get_class()}\n Spec: {self.spec}\n Days as Trial: {self.days_as_trial}\n"
         embed = Embed(title=self.name, description=embed_description, url=self.logs, color=0x33B5FF)
         embed.set_thumbnail(url=self.class_icon)
         return embed
