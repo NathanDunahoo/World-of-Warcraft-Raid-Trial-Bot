@@ -42,7 +42,7 @@ async def add_trial(ctx, name, _class, spec, logs=''):
         await ctx.send(f"{spec} is not a valid spec for {_class} {ErrorHandling.valid_specs[_class]}")
         return
     try:
-        trial = tm.add_trial(name, _class, spec, logs)
+        trial = tm.add_trial(name, _class, spec, logs=logs)
         await ctx.send(embed=trial.get_embed())
     except IntegrityError:
         await ctx.send(f"{name} is already a trial")

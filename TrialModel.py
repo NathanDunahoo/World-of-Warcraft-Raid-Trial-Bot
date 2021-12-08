@@ -3,7 +3,7 @@ from ErrorHandling import class_icons
 from discord import Embed
 
 class Trial:
-    def __init__(self, name, wow_class, spec, active,  date_joined=date.today(), logs=''):
+    def __init__(self, name, wow_class, spec, active,  date_joined, logs=''):
         self.name: str = name
         self._class: str = wow_class
         self.spec: str = spec

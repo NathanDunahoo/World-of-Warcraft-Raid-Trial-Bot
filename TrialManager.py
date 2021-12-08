@@ -25,7 +25,7 @@ class TrialManager:
         (name text, class text, spec text, date text, notes text)""")
         self.con.commit()
 
-    def add_trial(self, name: str, _class: str, spec: str, logs, active):
+    def add_trial(self, name: str, _class: str, spec: str, logs, date_joined=date.today(), active=1):
         """
         Adds a trial to the db
         Creates a Trial() and adds it to the trial_list
@@ -34,11 +34,13 @@ class TrialManager:
         :param _class: str trial's WoW class (paladin, warlock, mage)
         :param spec:  str trial's WoW class specification (prot, afflication, frost)
         :param logs: str url to trial's Warcraft logs (optional can be added later)
+        :param date_joined: date object - default date.today()
+        :param active: 0 or 1
         :return: Trial
         """
-        self.cur.execute(f"INSERT INTO {TRIAL_TABLE} VALUES (?,?,?,?,?,?)", (name, _class, spec, date.today(), logs, active))
+        self.cur.execute(f"INSERT INTO {TRIAL_TABLE} VALUES (?,?,?,?,?,?)", (name, _class, spec, date_joined, logs, active))
         self.con.commit()
-        trial: Trial = Trial(name, _class, spec, active, logs=logs)
+        trial: Trial = Trial(name, _class, spec, active=active, date_joined=date_joined, logs=logs)
         self.trial_list.append(trial)
         return trial
 
@@ -171,14 +173,7 @@ class TrialManager:
 
 
 if __name__ == "__main__":
-    tm = TrialManager()
-    # create_table()
-    # rint(get_all_trials())
-    # print(get_all_trials_as_str())
-    # get_days_as_a_trial('Notey')
-    for trial in tm.trial_list:
-        print(trial.__dict__)
-        #rint(trial.date_joined)
+    # For testing
     pass
 
 
