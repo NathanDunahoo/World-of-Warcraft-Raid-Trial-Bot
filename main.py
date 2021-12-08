@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from discord import Embed
+from discord import Embed, File
 from os import getenv
 from discord.ext import commands, tasks
 from sqlite3 import IntegrityError
@@ -108,19 +108,19 @@ async def remove_trial(ctx, trial: tm.get_Trial_by_name):
     await ctx.send(f"{trial.name} has been removed")
 
 @client.command()
-async def change_start_date(ctx, trial: tm.get_Trial_by_name, new_date: str):
+async def change_start_date(ctx, trial: tm.get_Trial_by_name, date: ErrorHandling.check_valid_date):
     # TODO add date verification/error handling
     """
     Updates a trial's join date
 
     :param ctx: commands.Context
     :param trial: Trial from get_Trial_by_name
-    :param new_date: str '2021-11-30'
+    :param date: str '2021-11-30'
     :return: None
     """
 
-    tm.change_start_date(trial, new_date)
-    await ctx.send(f"{trial.name}'s start date has been updated to {new_date}")
+    tm.change_start_date(trial, date)
+    await ctx.send(f"{trial.name}'s start date has been updated to {date}")
 
 
 @client.command()
@@ -140,8 +140,8 @@ async def make_inactive(ctx, trial: tm.get_Trial_by_name):
 async def add_logs(ctx, trial: tm.get_Trial_by_name, logs: str):
     """
     Discord command for adding/updating logs to a trial
-    
-    :param ctx: Dcommands.Context
+
+    :param ctx: commands.Context
     :param trial: Trial from get_Trial_by_name
     :param logs: str url for trial's Warcraft logs ('https://www.warcraftlogs.com/character/id/55296682')
     :return: None
@@ -157,6 +157,11 @@ async def check_for_promotions():
     for trial in tm.trial_list:
         if trial.check_for_promotion():
             pass
+# _________________________________________Other Commands_____________________________________________________________ #
+
+@client.command()
+async def pimmy(ctx):
+    await ctx.send(file=File(r'./media/FENNECFRIDAY.mp4'))
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from discord.ext import commands
+import re
 
 valid_classes = ["Paladin", "Monk", "Druid", "Priest", 'Deathknight', 'Demonhunter', 'Rogue', 'Mage', 'Warlock', 'Warrior', 'Shaman', 'Hunter']
 valid_specs = {
@@ -40,6 +41,9 @@ class SpecError(Exception):
 class TrialError(Exception):
     pass
 
+class BadDate(Exception):
+    pass
+
 class ErrorHandler(commands.Cog):
     """A cog for global error handling."""
 
@@ -49,7 +53,12 @@ class ErrorHandler(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
         if isinstance(error, commands.BadArgument):
-            await ctx.send('I could not find that trial...')
+            err_message: str = f'{error}'
+        elif isinstance(error, commands.CommandNotFound):
+            return
+        else:
+            err_message: str = f"Something went wrong :( {error}"
+        await ctx.send(err_message)
 
 def check_valid_class_spec(_class: str, spec: str):
     if _class not in valid_classes:
@@ -57,3 +66,10 @@ def check_valid_class_spec(_class: str, spec: str):
     else:
         if spec.lower() not in valid_specs[_class]:
             raise SpecError
+
+def check_valid_date(date: str):
+    check = re.search(r'^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$', date)
+    if bool(check):
+        return date
+    else:
+        raise BadDate
