@@ -1,0 +1,74 @@
+{
+  "Paladin": [
+    {
+      "Specs": ["Prot", "Ret", "Holy"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/f/fa/Charactercreate-class_paladin.png/revision/latest/scale-to-width-down/120?cb=20200517190005"
+    }
+  ],
+  "Monk": [
+    {
+      "Specs": ["Brew", "Mistweaver", "Windwalker"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/4/40/Charactercreate-class_monk.png/revision/latest/scale-to-width-down/120?cb=20200517190000"
+    }
+  ],
+  "Druid": [
+    {
+      "Specs": ["Boomkin", "Bear", "Resto"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/6/66/Charactercreate-class_druid.png/revision/latest/scale-to-width-down/120?cb=20200517185946"
+    }
+  ],
+  "Priest": [
+    {
+      "Specs": ["Shadow", "Disc", "Holy"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/7/7e/Charactercreate-class_priest.png/revision/latest/scale-to-width-down/120?cb=20200517190009"
+    }
+  ],
+  "Deathknight": [
+    {
+      "Specs": ["Unholy", "Blood", "Frost"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/d/de/Charactercreate-class_deathknight.png/revision/latest/scale-to-width-down/120?cb=20200517185937"
+    }
+  ],
+  "Demonhunter": [
+    {
+      "Specs": ["Havoc", "Vengeance"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/9/97/Charactercreate-class_demonhunter.png/revision/latest/scale-to-width-down/120?cb=20200517185942"
+    }
+  ],
+  "Rogue": [
+    {
+      "Specs": ["Sub", "Assass", "Outlaw"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/6/66/Charactercreate-class_rogue.png/revision/latest/scale-to-width-down/120?cb=20200517190014"
+    }
+  ],
+  "Mage": [
+    {
+      "Specs": ["Fire", "Arcane", "Frost"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/c/cc/Charactercreate-class_mage.png/revision/latest/scale-to-width-down/120?cb=20200517185956"
+    }
+  ],
+  "Warlock": [
+    {
+      "Specs": ["Affliction", "Demo", "Destruction"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/4/4f/Charactercreate-class_warlock.png/revision/latest/scale-to-width-down/120?cb=20200517190024"
+    }
+  ],
+  "Warrior": [
+    {
+      "Specs": ["Arms", "Fury", "Prot"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/0/0f/Charactercreate-class_warrior.png/revision/latest/scale-to-width-down/120?cb=20200517190030"
+    }
+  ],
+  "Shaman": [
+    {
+      "Specs": ["Resto", "Ele", "Enhance"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/1/17/Charactercreate-class_shaman.png/revision/latest/scale-to-width-down/120?cb=20200517190019"
+    }
+  ],
+  "Hunter": [
+    {
+      "Specs": ["Marksman", "Bm", "Survival"],
+      "Logo": "https://static.wikia.nocookie.net/wowpedia/images/e/e8/Charactercreate-class_hunter.png/revision/latest/scale-to-width-down/120?cb=20200517185951"
+    }
+  ]
+}

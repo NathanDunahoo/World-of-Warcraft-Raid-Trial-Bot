@@ -1,9 +1,9 @@
 from discord import Embed
 from discord.ext import commands, tasks
-import os
 from sqlite3 import IntegrityError
-from core import ErrorHandling
-from core.TrialManager import TrialManager
+from worldofwarcraft.WowData import WowData, ClassError, SpecError
+from worldofwarcraft.TrialManager import TrialManager
+from definitions import ROLE_ID
 
 """
 TrialCommands contains all commands used to manage World of Warcraft raid trials
@@ -11,6 +11,7 @@ TrialCommands contains all commands used to manage World of Warcraft raid trials
 """
 
 tm = TrialManager()
+wd = WowData()
 class TrialCommands(commands.Cog):
 
     def __init__(self, client):
@@ -31,12 +32,12 @@ class TrialCommands(commands.Cog):
         :return: None
         """
         try:
-            ErrorHandling.check_valid_class_spec(_class, spec)
-        except ErrorHandling.ClassError:
-            await ctx.send(f"{_class} is not a valid class {ErrorHandling.valid_classes}")
+            wd.check_valid_class_spec(_class, spec)
+        except ClassError:
+            await ctx.send(f"{_class} is not a valid class: {wd.wow_classes}")
             return
-        except ErrorHandling.SpecError:
-            await ctx.send(f"{spec} is not a valid spec for {_class} {ErrorHandling.valid_specs[_class]}")
+        except SpecError:
+            await ctx.send(f"{spec} is not a valid spec for {_class}: {wd.get_specs_for_class(_class)}")
             return
         try:
             trial = tm.add_trial(name, _class, spec, logs=logs)
@@ -105,7 +106,7 @@ class TrialCommands(commands.Cog):
         await ctx.send(f"{trial.name} has been removed")
 
     @commands.command()
-    async def change_start_date(self, ctx, trial: tm.get_Trial_by_name, date: ErrorHandling.check_valid_date):
+    async def change_start_date(self, ctx, trial: tm.get_Trial_by_name, date: wd.check_valid_date):
         """
         Updates a trial's join date
 
@@ -167,7 +168,7 @@ class TrialCommands(commands.Cog):
     async def check_for_trial_promotions(self, ctx):
         print("Starting checks for promotions")
         await ctx.send(
-            f"<@&{os.getenv('ROLE_ID')}> Trials ready for promotion: {', '.join(tm.get_trials_ready_for_promotion())}")
+            f"<@&{ROLE_ID}> Trials ready for promotion: {', '.join(tm.get_trials_ready_for_promotion())}")
 
 def setup(client):
     client.add_cog(TrialCommands(client))

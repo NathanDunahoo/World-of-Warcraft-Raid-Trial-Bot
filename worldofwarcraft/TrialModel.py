@@ -1,6 +1,15 @@
 from datetime import date
-from core.ErrorHandling import class_icons
 from discord import Embed
+from worldofwarcraft import WowData
+
+"""
+Model for a World of Warcraft Trial
+
+Used to store information:
+Chracter information (name, class spec), 
+Trial information(days as trial, date joined, and link to their Warcraft logs)
+
+"""
 
 class Trial:
     def __init__(self, name, wow_class, spec, active,  date_joined, logs=None):
@@ -15,7 +24,7 @@ class Trial:
         self.days_as_trial: int = 0
         self.get_days_as_a_trial()
 
-        self.class_icon = class_icons[self.get_class()]
+        self.class_icon = self.get_class_icon()
 
     def __repr__(self):
         return f"{self.name}, {self._class}, {self.spec}, {self.active}, {self.date_joined}, {self.logs}"
@@ -32,9 +41,19 @@ class Trial:
         return tuple([self.name, self.spec, self._class, self.days_as_trial])
 
     def is_active(self) -> bool:
+        """
+        Checks if the Trial is valid (1)
+
+        :return: bool
+        """
         return self.active not in [0, 'inactive']
 
-    def get_days_as_a_trial(self):
+    def get_days_as_a_trial(self) -> None:
+        """"
+        Today's date - date_joined to find days as a trial
+
+        :return: None
+        """
         if self.is_active():
             year, month, day = str(self.date_joined).split('-')
             date_joined = date(int(year), int(month), int(day))
@@ -67,6 +86,15 @@ class Trial:
         embed = Embed(title=self.name, description=embed_description, url=self.logs, color=0x33B5FF)
         embed.set_thumbnail(url=self.class_icon)
         return embed
+
+    def get_class_icon(self):
+        """
+        Gets the class icon from WoWData
+
+        :return: str url to class icon
+        """
+        wd = WowData.WowData()
+        return wd.get_logo_for_class(self._class)
 
 
 def create_trial_from_tuple(trial_info: tuple) -> Trial:

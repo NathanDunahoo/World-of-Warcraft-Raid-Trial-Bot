@@ -1,13 +1,17 @@
 import sqlite3
 from datetime import date
-from core.ErrorHandling import TrialError
-from core.TrialModel import Trial, create_trial_from_tuple
+from worldofwarcraft.WowData import TrialError
+from worldofwarcraft.TrialModel import Trial, create_trial_from_tuple
+from definitions import ROOT_DIR, DB_NAME, TRIAL_TABLE
+import os
 
-DB_NAME = 'inferno.db'
-TRIAL_TABLE = 'trials'
+"""
+Backend for all TrialCommands 
+Interacts with TrailModel and SQLite to make updates to the db
+"""
 
 class TrialManager:
-    con = sqlite3.connect(DB_NAME)
+    con = sqlite3.connect(os.path.join(ROOT_DIR, DB_NAME))
     cur = con.cursor()
 
     def __init__(self):
@@ -52,8 +56,6 @@ class TrialManager:
         """
         self.cur.execute(f"SELECT * from {TRIAL_TABLE}")
         self.trial_list: list[Trial] = [create_trial_from_tuple(trial) for trial in self.cur.fetchall()]
-
- # ___________________________________________________________________________________________________________________ #
 
     def get_all_trials_as_str(self) -> str:
         """
@@ -178,9 +180,9 @@ class TrialManager:
 if __name__ == "__main__":
     # For testing
     tm = TrialManager()
+    print(tm.trial_list)
     for t in tm.trial_list:
-        print(str(t))
-        print(repr(t))
+        print(t.class_icon)
     #tm.check_for_promotions()
     pass
 
