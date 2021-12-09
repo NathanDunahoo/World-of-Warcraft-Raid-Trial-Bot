@@ -25,8 +25,8 @@ class TrialCommands(commands.Cog):
 
         :param ctx: commands.Context
         :param name: str trial's name ('Notey')
-        :param _class: str trial's WoW class (paladin, warlock, mage)
-        :param spec:  str trial's WoW class specification (prot, afflication, frost)
+        :param _class: str trial's WoW class (Paladin, Warlock, Mage)
+        :param spec:  str trial's WoW class specification (Prot, Affliction, Frost)
         :param logs: str url to trial's Warcraft logs (optional can be added later)
         :return: None
         """

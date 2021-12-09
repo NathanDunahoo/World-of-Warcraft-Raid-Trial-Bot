@@ -64,7 +64,7 @@ def check_valid_class_spec(_class: str, spec: str):
     if _class not in valid_classes:
         raise ClassError
     else:
-        if spec.lower() not in valid_specs[_class]:
+        if spec not in valid_specs[_class]:
             raise SpecError
 
 def check_valid_date(date: str):
