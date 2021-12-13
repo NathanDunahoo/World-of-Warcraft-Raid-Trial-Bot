@@ -3,6 +3,7 @@ from discord.ext import commands
 from definitions import TOKEN
 
 client = commands.Bot(command_prefix='!')
+
 """
 Welcome to my Discord Bot - Made by Notey#0001
 

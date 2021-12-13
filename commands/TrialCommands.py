@@ -31,6 +31,7 @@ class TrialCommands(commands.Cog):
         :param logs: str url to trial's Warcraft logs (optional can be added later)
         :return: None
         """
+
         try:
             wd.check_valid_class_spec(_class, spec)
         except ClassError:
@@ -55,6 +56,7 @@ class TrialCommands(commands.Cog):
         :param ctx: commands.Context
         :return: None
         """
+
         list_of_sorted_trials: list[tuple] = tm.get_all_trials_as_tuple()
         list_of_sorted_trials.sort(key=lambda x: x[3], reverse=True)
 
@@ -75,6 +77,7 @@ class TrialCommands(commands.Cog):
         :param trial: Trial from get_Trial_by_name
         :return: None
         """
+
         await ctx.send(embed=trial.get_embed())
 
     @commands.command()

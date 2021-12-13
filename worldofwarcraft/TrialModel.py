@@ -5,7 +5,7 @@ from worldofwarcraft import WowData
 """
 Model for a World of Warcraft Trial
 
-Used to store information:
+Used to store:
 Chracter information (name, class spec), 
 Trial information(days as trial, date joined, and link to their Warcraft logs)
 

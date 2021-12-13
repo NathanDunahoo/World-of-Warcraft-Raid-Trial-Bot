@@ -1,9 +1,9 @@
+import os
 import sqlite3
 from datetime import date
+from definitions import ROOT_DIR, DB_NAME, TRIAL_TABLE
 from worldofwarcraft.WowData import TrialError
 from worldofwarcraft.TrialModel import Trial, create_trial_from_tuple
-from definitions import ROOT_DIR, DB_NAME, TRIAL_TABLE
-import os
 
 """
 Backend for all TrialCommands 
@@ -11,23 +11,17 @@ Interacts with TrailModel and SQLite to make updates to the db
 """
 
 class TrialManager:
-    con = sqlite3.connect(os.path.join(ROOT_DIR, DB_NAME))
-    cur = con.cursor()
+    db = sqlite3.connect(os.path.join(ROOT_DIR, DB_NAME))
+    cur = db.cursor()
 
     def __init__(self):
-        self.create_table()
-
         self.trial_list: list[Trial] = []
+        self.guild_id = TRIAL_TABLE
+
         self.get_all_trials()
 
-    def create_table(self):
-        """
-        Creates a table in DB_NAME as TRIAL_TABLE if it doesn't exist
-        :return: None
-        """
-        self.cur.execute(f"""CREATE TABLE if not exists {TRIAL_TABLE}
-        (name text, class text, spec text, date text, notes text)""")
-        self.con.commit()
+    def set_guild_id(self, _id):
+        self.guild_id = f'g{_id}'
 
     def add_trial(self, name: str, _class: str, spec: str, logs, date_joined=date.today(), active=1):
         """
@@ -42,8 +36,9 @@ class TrialManager:
         :param active: 0 or 1
         :return: Trial
         """
-        self.cur.execute(f"INSERT INTO {TRIAL_TABLE} VALUES (?,?,?,?,?,?)", (name, _class, spec, date_joined, logs, active))
-        self.con.commit()
+        self.db.execute(f"INSERT INTO {self.guild_id} VALUES (?,?,?,?,?,?)", (name, _class, spec, date_joined, logs, active))
+        self.db.commit()
+
         trial: Trial = Trial(name, _class, spec, active=active, date_joined=date_joined, logs=logs)
         self.trial_list.append(trial)
         return trial
@@ -54,7 +49,8 @@ class TrialManager:
         Stores results in self.trial_list
         :return:
         """
-        self.cur.execute(f"SELECT * from {TRIAL_TABLE}")
+
+        self.cur.execute(f"SELECT * from {self.guild_id}")
         self.trial_list: list[Trial] = [create_trial_from_tuple(trial) for trial in self.cur.fetchall()]
 
     def get_all_trials_as_str(self) -> str:
@@ -115,7 +111,7 @@ class TrialManager:
         :return: None
         """
         print(f"{trial.name} has been deleted from table")
-        self.cur.execute(f"""DELETE FROM {TRIAL_TABLE}
+        self.db.execute(f"""DELETE FROM {self.guild_id}
                 WHERE name=:name
         """, {'name': trial.name})
         self.update_db_and_list()
@@ -128,7 +124,7 @@ class TrialManager:
         :param new_date: str date format: '2021-11-30'
         :return: None
         """
-        self.cur.execute(f"""UPDATE {TRIAL_TABLE}
+        self.db.execute(f"""UPDATE {self.guild_id}
                 SET date=:date
                 WHERE name=:name
         """, {'date': str(new_date), 'name': trial.name})
@@ -143,7 +139,7 @@ class TrialManager:
         :param logs: str url to trial's Warcraft logs ('https://www.warcraftlogs.com/character/id/55296682')
         :return: None
         """
-        self.cur.execute(f"""UPDATE {TRIAL_TABLE}
+        self.db.execute(f"""UPDATE {self.guild_id}
                     SET logs=:logs
                     WHERE name=:name
             """, {'logs': logs, 'name': trial.name})
@@ -158,7 +154,7 @@ class TrialManager:
         :param status: '0' for inactive - '1' for active
         :return: None
         """
-        self.cur.execute(f"""UPDATE {TRIAL_TABLE}
+        self.db.execute(f"""UPDATE {self.guild_id}
                         SET active=:status
                         WHERE name=:name
                 """, {'status': status, 'name': trial.name})
@@ -173,7 +169,7 @@ class TrialManager:
 
         :return: None
         """
-        self.con.commit()
+        self.db.commit()
         self.get_all_trials()
 
 
