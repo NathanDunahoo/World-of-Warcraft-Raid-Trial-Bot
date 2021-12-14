@@ -39,18 +39,21 @@ class WowData:
     def get_logo_for_class(self, cls) -> str:
         return self.wowdata[cls][0]['Logo']
 
-    def check_valid_class_spec(self, _class: str, spec: str):
+    def check_valid_spec(self, cls: str, spec: str):
         """
         Check is the WoW class and spec are valid.
-        :param _class: WoW Class (Paladin, Warlock, Mage)
+        :param cls: WoW Class (Paladin, Warlock, Mage)
         :param spec: Coresponding WoW spec to the class (Protection, Affliction, Frost)
         :return: ClassError or SpecError if invalid. None is valid
         """
-        if _class not in self.wowdata.keys():
+
+        if spec not in self.wowdata[cls][0]['Specs']:
+            raise SpecError
+
+    def check_valid_class(self, cls):
+        if cls not in self.wowdata.keys():
             raise ClassError
-        else:
-            if spec not in self.wowdata[_class][0]['Specs']:
-                raise SpecError
+        return cls
 
     def check_valid_date(self, date: str):
         """

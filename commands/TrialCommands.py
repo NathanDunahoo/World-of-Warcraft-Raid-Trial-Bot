@@ -18,7 +18,7 @@ class TrialCommands(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def add_trial(self, ctx, name, _class, spec, logs=None):
+    async def add_trial(self, ctx, name, cls: wd.check_valid_class, spec, logs=''):
         """
         Discord command for adding a new trial
         Checks if class and spec are valid
@@ -26,22 +26,19 @@ class TrialCommands(commands.Cog):
 
         :param ctx: commands.Context
         :param name: str trial's name ('Notey')
-        :param _class: str trial's WoW class (Paladin, Warlock, Mage)
+        :param cls: str trial's WoW class (Paladin, Warlock, Mage)
         :param spec:  str trial's WoW class specification (Prot, Affliction, Frost)
         :param logs: str url to trial's Warcraft logs (optional can be added later)
         :return: None
         """
 
         try:
-            wd.check_valid_class_spec(_class, spec)
-        except ClassError:
-            await ctx.send(f"{_class} is not a valid class: {wd.wow_classes}")
-            return
+            wd.check_valid_spec(cls, spec)
         except SpecError:
-            await ctx.send(f"{spec} is not a valid spec for {_class}: {wd.get_specs_for_class(_class)}")
+            await ctx.send(f"{spec} is not a valid spec for {cls}: {wd.get_specs_for_class(cls)}")
             return
         try:
-            trial = tm.add_trial(name, _class, spec, logs=logs)
+            trial = tm.add_trial(name, cls, spec, logs=logs)
             await ctx.send(embed=trial.get_embed())
         except IntegrityError:
             await ctx.send(f"{name} is already a trial")

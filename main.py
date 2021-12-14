@@ -1,6 +1,9 @@
 #!/usr/bin/python3
+from discord import HTTPException
 from discord.ext import commands
-from definitions import TOKEN
+from definitions import TOKEN, ROOT_DIR
+from os import listdir, path
+from worldofwarcraft import WowData
 
 client = commands.Bot(command_prefix='!')
 
@@ -19,8 +22,11 @@ https://discord.com/developers/applications/
 
 """
 
-cog_files = ['TrialCommands', 'CustomUserCommands']  # Define command file here
-for cog_file in cog_files:
+if path.exists(path.join(ROOT_DIR, 'commands')):
+    command_files = [f.split('.')[0] for f in listdir('./commands') if f.endswith('.py')]
+else:
+    command_files = []
+for cog_file in command_files:
     client.load_extension(f"commands.{cog_file}")
 
 
@@ -36,6 +42,11 @@ class ErrorHandler(commands.Cog):
             err_message: str = f'{error}'
         elif isinstance(error, commands.CommandNotFound):
             return
+        elif isinstance(error, HTTPException):
+            err_message: str = f'{error}'
+        elif isinstance(error, WowData.ClassError):
+            wd = WowData.WowData()
+            err_message = f'Class not valid: {wd.get_classes()}'
         else:
             err_message: str = f"Something went wrong :( {error}"
         await ctx.send(err_message)
