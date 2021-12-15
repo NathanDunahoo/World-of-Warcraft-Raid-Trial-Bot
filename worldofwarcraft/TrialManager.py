@@ -10,39 +10,17 @@ Backend for all TrialCommands
 Interacts with TrailModel and SQLite to make updates to the db
 """
 
+db = sqlite3.connect(os.path.join(ROOT_DIR, DB_NAME))
+cur = db.cursor()
+
 class TrialManager:
-    db = sqlite3.connect(os.path.join(ROOT_DIR, DB_NAME))
-    cur = db.cursor()
 
     def __init__(self):
         self.trial_list: list[Trial] = []
-        self.guild_id = TRIAL_TABLE
-
+        self.table_name = TRIAL_TABLE  # Equates to Discord server ID 'g<id>'
         self.get_all_trials()
 
-    def set_guild_id(self, _id):
-        self.guild_id = f'g{_id}'
-
-    def add_trial(self, name: str, _class: str, spec: str, logs, date_joined=date.today(), active=1):
-        """
-        Adds a trial to the db
-        Creates a Trial() and adds it to the trial_list
-
-        :param name: str trial's name ('Notey')
-        :param _class: str trial's WoW class (Paladin, Warlock, Mage)
-        :param spec:  str trial's WoW class specification (Prot, Afflication, Frost)
-        :param logs: str url to trial's Warcraft logs (optional can be added later)
-        :param date_joined: date object - default date.today()
-        :param active: 0 or 1
-        :return: Trial
-        """
-        self.db.execute(f"INSERT INTO {self.guild_id} VALUES (?,?,?,?,?,?)", (name, _class, spec, date_joined, logs, active))
-        self.db.commit()
-
-        trial: Trial = Trial(name, _class, spec, active=active, date_joined=date_joined, logs=logs)
-        self.trial_list.append(trial)
-        return trial
-
+    """Helper Functions"""
     def get_all_trials(self):
         """
         DB query to fetch all trials from the table
@@ -50,8 +28,8 @@ class TrialManager:
         :return:
         """
 
-        self.cur.execute(f"SELECT * from {self.guild_id}")
-        self.trial_list: list[Trial] = [create_trial_from_tuple(trial) for trial in self.cur.fetchall()]
+        cur.execute(f"SELECT * from {self.table_name}")
+        self.trial_list: list[Trial] = [create_trial_from_tuple(trial) for trial in cur.fetchall()]
 
     def get_all_trials_as_str(self) -> str:
         """
@@ -90,18 +68,43 @@ class TrialManager:
             if trial.name == name:
                 return trial
 
-    def is_valid_trial(self, trial: str) -> bool:
-        """
-        Checks if a trial is valid by seeing if their name is already in the trial_list
-        Used get_name_of_all_trials() to get a list of all trial's names
-
-        :param trial: trial's name ('Notey')
-        :return: bool
-        """
-        return trial in self.get_name_of_all_trials()
-
     def get_trials_ready_for_promotion(self) -> list[str]:
         return [trial.name for trial in self.trial_list if trial.check_for_promotion()]
+
+    def update_db_and_list(self):
+        """
+        Helper function to be called after every db action
+
+        Commits the changes to the db
+        Calls get_all_trials to update trial_list with changes from the db
+
+        :return: None
+        """
+        db.commit()
+        self.get_all_trials()
+
+    """ DB Actions """
+    def add_trial(self, name: str, cls: str, spec: str, logs, date_joined=date.today(), active=1):
+        """
+        Adds a trial to the db
+        Creates a Trial() and adds it to the trial_list
+
+        :param name: str trial's name ('Notey')
+        :param cls: str trial's WoW class (Paladin, Warlock, Mage)
+        :param spec:  str trial's WoW class specification (Prot, Afflication, Frost)
+        :param logs: str url to trial's Warcraft logs (optional can be added later)
+        :param date_joined: date object - default date.today()
+        :param active: 0 or 1
+        :return: Trial
+        """
+        db.execute(f"INSERT INTO {self.table_name} "
+                   f"VALUES (?,?,?,?,?,?)",
+                   (name, cls, spec, date_joined, logs, active))
+        db.commit()
+
+        trial: Trial = Trial(name, cls, spec, active=active, date_joined=date_joined, logs=logs)
+        self.trial_list.append(trial)
+        return trial
 
     def promote_trial(self, trial: Trial):
         """
@@ -110,10 +113,10 @@ class TrialManager:
         :param trial: TrialModel
         :return: None
         """
-        print(f"{trial.name} has been deleted from table")
-        self.db.execute(f"""DELETE FROM {self.guild_id}
-                WHERE name=:name
-        """, {'name': trial.name})
+
+        db.execute(f"""DELETE FROM {self.table_name}
+                    WHERE name=:name
+                    """, {'name': trial.name})
         self.update_db_and_list()
 
     def change_start_date(self, trial: Trial, new_date=date.today()):
@@ -124,10 +127,11 @@ class TrialManager:
         :param new_date: str date format: '2021-11-30'
         :return: None
         """
-        self.db.execute(f"""UPDATE {self.guild_id}
-                SET date=:date
-                WHERE name=:name
-        """, {'date': str(new_date), 'name': trial.name})
+
+        db.execute(f"""UPDATE {self.table_name}
+                    SET date=:date
+                    WHERE name=:name 
+                    """,  {'date': str(new_date), 'name': trial.name})
         self.update_db_and_list()
 
     def add_logs(self, trial: Trial, logs: str):
@@ -139,11 +143,11 @@ class TrialManager:
         :param logs: str url to trial's Warcraft logs ('https://www.warcraftlogs.com/character/id/55296682')
         :return: None
         """
-        self.db.execute(f"""UPDATE {self.guild_id}
+
+        db.execute(f"""UPDATE {self.table_name}
                     SET logs=:logs
                     WHERE name=:name
-            """, {'logs': logs, 'name': trial.name})
-        self.update_db_and_list()
+                     """, {'logs': logs, 'name': trial.name})
 
     def change_status(self, trial: Trial, status: int):
         """
@@ -154,23 +158,11 @@ class TrialManager:
         :param status: '0' for inactive - '1' for active
         :return: None
         """
-        self.db.execute(f"""UPDATE {self.guild_id}
+        db.execute(f"""UPDATE {self.table_name}
                         SET active=:status
                         WHERE name=:name
-                """, {'status': status, 'name': trial.name})
+                    """, {'status': status, 'name': trial.name})
         self.update_db_and_list()
-
-    def update_db_and_list(self):
-        """
-        Helper function to be called after every db action
-
-        Commits the changes to the db
-        Calls get_all_trials to update trial_list with changes from the db
-
-        :return: None
-        """
-        self.db.commit()
-        self.get_all_trials()
 
 
 if __name__ == "__main__":

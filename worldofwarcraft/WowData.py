@@ -1,6 +1,6 @@
 from re import search
 from json import load
-from definitions import ROOT_DIR, WOW_DATA
+from definitions import ROOT_DIR
 import os
 
 """Exceptions defined for ErrorHandling"""
@@ -22,7 +22,7 @@ def get_wow_data() -> dict:
 
     :return: dict
     """
-    file = os.path.join(ROOT_DIR, 'worldofwarcraft', WOW_DATA)
+    file = os.path.join(ROOT_DIR, 'worldofwarcraft', 'wowdata.json')
     return load(open(file))
 
 class WowData:

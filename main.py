@@ -21,11 +21,10 @@ To get started you will need an environment variable ('TOKEN') for your Discord 
 https://discord.com/developers/applications/
 
 """
-
-if path.exists(path.join(ROOT_DIR, 'commands')):
-    command_files = [f.split('.')[0] for f in listdir('./commands') if f.endswith('.py')]
-else:
-    command_files = []
+command_files = []
+command_path = path.join(ROOT_DIR, 'commands')
+if path.exists(command_path):
+    command_files = [f.split('.')[0] for f in listdir(command_path) if f.endswith('.py')]
 for cog_file in command_files:
     client.load_extension(f"commands.{cog_file}")
 

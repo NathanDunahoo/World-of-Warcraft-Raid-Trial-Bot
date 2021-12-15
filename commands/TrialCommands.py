@@ -1,7 +1,7 @@
 from discord import Embed
 from discord.ext import commands, tasks
 from sqlite3 import IntegrityError
-from worldofwarcraft.WowData import WowData, ClassError, SpecError
+from worldofwarcraft.WowData import WowData, SpecError
 from worldofwarcraft.TrialManager import TrialManager
 from definitions import ROLE_ID
 
@@ -17,8 +17,14 @@ class TrialCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command()
-    async def add_trial(self, ctx, name, cls: wd.check_valid_class, spec, logs=''):
+    @commands.group()
+    @commands.has_permissions(administrator=True)
+    async def trial(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Invalid trial command passed...')
+
+    @trial.command()
+    async def add(self, ctx, name, cls: wd.check_valid_class, spec, logs=''):
         """
         Discord command for adding a new trial
         Checks if class and spec are valid
@@ -43,8 +49,8 @@ class TrialCommands(commands.Cog):
         except IntegrityError:
             await ctx.send(f"{name} is already a trial")
 
-    @commands.command()
-    async def list_trials(self, ctx):
+    @trial.command()
+    async def list(self, ctx):
         """
         Creates an Embed object for the Discord message
         Gets a trial list list[tuple]
@@ -65,8 +71,8 @@ class TrialCommands(commands.Cog):
             embed.add_field(name=trial.name, value=value_desc)
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def get_status(self, ctx, trial: tm.get_Trial_by_name):
+    @trial.command()
+    async def status(self, ctx, trial: tm.get_Trial_by_name):
         """
         Discord Command for sending the status of the trial (Name, Class, Spec, Logs, Days as trial) all in an Embed
 
@@ -77,8 +83,8 @@ class TrialCommands(commands.Cog):
 
         await ctx.send(embed=trial.get_embed())
 
-    @commands.command()
-    async def promote_trial(self, ctx, trial: tm.get_Trial_by_name):
+    @trial.command()
+    async def promote(self, ctx, trial: tm.get_Trial_by_name):
         """
         Discord command for promoting a trial
 
@@ -90,8 +96,8 @@ class TrialCommands(commands.Cog):
         tm.promote_trial(trial)
         await ctx.send(f"{trial} has been promoted")
 
-    @commands.command()
-    async def remove_trial(self, ctx, trial: tm.get_Trial_by_name):
+    @trial.command()
+    async def remove(self, ctx, trial: tm.get_Trial_by_name):
         """
         Discorc command for removing a trial
 
@@ -105,7 +111,7 @@ class TrialCommands(commands.Cog):
         tm.promote_trial(trial)
         await ctx.send(f"{trial.name} has been removed")
 
-    @commands.command()
+    @trial.command()
     async def change_start_date(self, ctx, trial: tm.get_Trial_by_name, date: wd.check_valid_date):
         """
         Updates a trial's join date
@@ -119,7 +125,7 @@ class TrialCommands(commands.Cog):
         tm.change_start_date(trial, date)
         await ctx.send(f"{trial.name}'s start date has been updated to {date}")
 
-    @commands.command()
+    @trial.command()
     async def make_inactive(self, ctx, trial: tm.get_Trial_by_name):
         """
         Discord command for moving trial's status to 'inactive' or '0'
@@ -132,7 +138,7 @@ class TrialCommands(commands.Cog):
         tm.change_status(trial, 0)
         await ctx.send(f"{trial.name} has been made inactive")
 
-    @commands.command()
+    @trial.command()
     async def make_active(self, ctx, trial: tm.get_Trial_by_name):
         """
         Discord command for moving trial's status to 'active' or 1
@@ -146,7 +152,7 @@ class TrialCommands(commands.Cog):
         tm.change_start_date(trial)
         await ctx.send(f"{trial.name} has been made active")
 
-    @commands.command()
+    @trial.command()
     async def add_logs(self, ctx, trial: tm.get_Trial_by_name, logs: str):
         """
         Discord command for adding/updating logs to a trial
@@ -160,8 +166,9 @@ class TrialCommands(commands.Cog):
         tm.add_logs(trial, logs)
         await ctx.send(f"{trial.name}'s logs have been updated to {logs}")
 
+    """Tasks"""
     @commands.command()
-    async def promotion_task(self, ctx):
+    async def promotion(self, ctx):
         await self.check_for_trial_promotions.start(ctx)
 
     @tasks.loop(hours=24)
